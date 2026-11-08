@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e85b91">
+  <title>LEHEALTH</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff5f8;
+      color: #242026;
+    }
+    header {
+      background: #171318;
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+    }
+    header h1 {
+      color: #f28bb2;
+      letter-spacing: 3px;
+      margin: 0;
+    }
+    header p { margin-bottom: 0; color: #e8dce2; }
+    main {
+      max-width: 650px;
+      margin: auto;
+      padding: 18px;
+    }
+    section {
+      background: white;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 14px #0000000d;
+    }
+    h2 { font-size: 19px; }
+    label { display: block; margin: 12px 0 6px; }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font: inherit;
+    }
+    textarea { min-height: 90px; }
+    button {
+      background: #e85b91;
+      color: white;
+      border: 0;
+      font-weight: bold;
+      margin-top: 14px;
+      cursor: pointer;
+    }
+    .entry {
+      border-bottom: 1px solid #eee;
+      padding: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    .note { color: #756b72; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>LEHEALTH</h1>
+    <p>Dein persönliches Gesundheits-Tagebuch</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Willkommen bei LEHEALTH</h2>
+      <p>Behalte Symptome, Belastungen und Erholung im Blick.</p>
+      <p class="note">Deine Einträge werden in dieser ersten Version nur lokal in diesem Browser gespeichert.</p>
+    </section>
+
+    <section>
+      <h2>Täglicher Check-in</h2>
+      <form id="healthForm">
+        <label for="date">Datum</label>
+        <input id="date" type="date" required>
+
+        <label for="energy">Energie (0–10)</label>
+        <input id="energy" type="number" min="0" max="10" value="5">
+
+        <label for="pain">Schmerzen (0–10)</label>
+        <input id="pain" type="number" min="0" max="10" value="0">
+
+        <label for="sleep">Schlafqualität</label>
+        <select id="sleep">
+          <option>Sehr gut</option>
+          <option>Gut</option>
+          <option>Mittel</option>
+          <option>Schlecht</option>
+          <option>Sehr schlecht</option>
+        </select>
+
+        <label for="symptoms">Symptome und Beobachtungen</label>
+        <textarea id="symptoms" placeholder="Wie ging es dir heute?"></textarea>
+
+        <label for="activity">Aktivitäten und Belastungen</label>
+        <textarea id="activity" placeholder="Was hast du heute gemacht?"></textarea>
+
+        <label for="recovery">Erholung</label>
+        <textarea id="recovery" placeholder="Was hat dir geholfen?"></textarea>
+
+        <button type="submit">Eintrag speichern</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Meine bisherigen Einträge</h2>
+      <div id="entries">Noch keine Einträge vorhanden.</div>
+      <button id="exportButton" type="button">Daten als JSON exportieren</button>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("healthForm");
+    const entriesBox = document.getElementById("entries");
+    const storageKey = "lehealth_entries_v1";
+
+    document.getElementById("date").value =
+      new Date().toISOString().slice(0, 10);
+
+    function getEntries() {
+      return JSON.parse(localStorage.getItem(storageKey) || "[]");
+    }
+
+    function showEntries() {
+      const entries = getEntries();
+      entriesBox.replaceChildren();
+
+      if (!entries.length) {
+        entriesBox.textContent = "Noch keine Einträge vorhanden.";
+        return;
+      }
+
+      entries.slice().reverse().forEach(entry => {
+        const div = document.createElement("div");
+        div.className = "entry";
+
+        const heading = document.createElement("strong");
+        heading.textContent = entry.date;
+
+        const details = document.createElement("p");
+        details.textContent =
+          "Energie: " + entry.energy +
+          " | Schmerzen: " + entry.pain +
+          " | Schlaf: " + entry.sleep;
+
+        const notes = document.createElement("p");
+        notes.textContent =
+          "Symptome: " + entry.symptoms +
+          "\nAktivitäten: " + entry.activity +
+          "\nErholung: " + entry.recovery;
+
+        div.append(heading, details, notes);
+        entriesBox.append(div);
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const entry = {
+        date: document.getElementById("date").value,
+        energy: document.getElementById("energy").value,
+        pain: document.getElementById("pain").value,
+        sleep: document.getElementById("sleep").value,
+        symptoms: document.getElementById("symptoms").value,
+        activity: document.getElementById("activity").value,
+        recovery: document.getElementById("recovery").value
+      };
+
+      const entries = getEntries();
+      entries.push(entry);
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+
+      form.reset();
+      document.getElementById("date").value =
+        new Date().toISOString().slice(0, 10);
+
+      showEntries();
+      alert("Dein Eintrag wurde gespeichert.");
+    });
+
+    document.getElementById("exportButton").addEventListener("click", () => {
+      const blob = new Blob(
+        [JSON.stringify(getEntries(), null, 2)],
+        { type: "application/json" }
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "LEHEALTH-Daten.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    showEntries();
+  </script>
+</body>
+</html>
