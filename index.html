@@ -1,169 +1,382 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e85b91">
-  <title>LEHEALTH</title>
+  <meta name="theme-color" content="#ff1685">
+  <title>LEHEALTH – Dein Gesundheitstagebuch</title>
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --pink: #ff1685;
+      --light-pink: #ffe1ef;
+      --pale: #fff4f9;
+      --black: #171217;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: #fff5f8;
-      color: #242026;
+      color: var(--black);
+      background: linear-gradient(145deg, #fff4f9, #ffd1e5);
     }
+
     header {
-      background: #171318;
+      background: var(--black);
       color: white;
-      padding: 28px 20px;
       text-align: center;
+      padding: 24px 15px;
+      border-bottom: 5px solid var(--pink);
     }
-    header h1 {
-      color: #f28bb2;
-      letter-spacing: 3px;
-      margin: 0;
+
+    .logo {
+      color: var(--pink);
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      animation: pop 1.2s ease both;
     }
-    header p { margin-bottom: 0; color: #e8dce2; }
+
+    @keyframes pop {
+      0% { transform: scale(.5); opacity: 0; }
+      65% { transform: scale(1.18); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+
     main {
-      max-width: 650px;
-      margin: auto;
-      padding: 18px;
+      width: min(650px, 92%);
+      margin: 25px auto 100px;
+      position: relative;
     }
-    section {
+
+    .heart-background {
+      position: fixed;
+      right: -35px;
+      bottom: 80px;
+      font-size: 190px;
+      color: rgba(255, 22, 133, .08);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 35px 20px;
       background: white;
-      padding: 18px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 14px #0000000d;
+      border-radius: 25px;
+      box-shadow: 0 8px 25px rgba(100, 0, 50, .12);
+      margin-bottom: 22px;
     }
-    h2 { font-size: 19px; }
-    label { display: block; margin: 12px 0 6px; }
-    input, select, textarea, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      font: inherit;
+
+    .welcome h1 {
+      color: var(--pink);
+      font-size: 27px;
     }
-    textarea { min-height: 90px; }
-    button {
-      background: #e85b91;
-      color: white;
-      border: 0;
+
+    .beating-heart {
+      display: inline-block;
+      font-size: 48px;
+      animation: heartbeat 1s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.25); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.18); }
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 23px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 20px rgba(100, 0, 50, .09);
+    }
+
+    h2 {
+      color: var(--pink);
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
       font-weight: bold;
-      margin-top: 14px;
+      margin: 17px 0 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      border: 2px solid #ffd0e5;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #fffafd;
+      color: var(--black);
+    }
+
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 30px;
+      padding: 13px 20px;
+      background: var(--pink);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
     }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    .main-button {
+      width: 100%;
+      margin-top: 22px;
+    }
+
+    .secondary {
+      background: var(--black);
+      margin-top: 12px;
+    }
+
+    .navigation {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      gap: 5px;
+      padding: 12px 8px;
+      background: var(--black);
+      border-top: 4px solid var(--pink);
+      z-index: 5;
+    }
+
+    .navigation button {
+      flex: 1;
+      padding: 12px 5px;
+      font-size: 13px;
+      background: transparent;
+      color: white;
+    }
+
+    .navigation button.active {
+      background: var(--pink);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+      animation: appear .3s ease;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .entry {
-      border-bottom: 1px solid #eee;
-      padding: 12px 0;
+      border-left: 5px solid var(--pink);
+      background: var(--pale);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0;
       overflow-wrap: anywhere;
     }
-    .note { color: #756b72; font-size: 13px; }
+
+    .entry strong {
+      color: var(--pink);
+    }
+
+    .notice {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #62545d;
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
+
 <body>
+
+  <div class="heart-background">♥</div>
+
   <header>
-    <h1>LEHEALTH</h1>
-    <p>Dein persönliches Gesundheits-Tagebuch</p>
+    <div class="logo">LEHEALTH</div>
+    <div class="subtitle">DEIN TAGEBUCH. DEIN WOHLBEFINDEN.</div>
   </header>
 
   <main>
-    <section>
-      <h2>Willkommen bei LEHEALTH</h2>
-      <p>Behalte Symptome, Belastungen und Erholung im Blick.</p>
-      <p class="note">Deine Einträge werden in dieser ersten Version nur lokal in diesem Browser gespeichert.</p>
+
+    <section id="welcome" class="welcome">
+      <div class="beating-heart">💗</div>
+      <h1>Willkommen bei LEHEALTH</h1>
+      <p>Schön, dass du da bist.</p>
+      <p>Ein kleiner Moment nur für dich und dein Wohlbefinden.</p>
+      <button class="main-button" onclick="showPage('checkin')">
+        Zum Tages-Check
+      </button>
     </section>
 
-    <section>
-      <h2>Täglicher Check-in</h2>
-      <form id="healthForm">
-        <label for="date">Datum</label>
-        <input id="date" type="date" required>
+    <section id="checkin" class="page active">
+      <div class="card">
+        <h2>💗 Dein Tages-Check</h2>
+        <p>Wie geht es dir heute?</p>
 
-        <label for="energy">Energie (0–10)</label>
-        <input id="energy" type="number" min="0" max="10" value="5">
+        <form id="healthForm">
 
-        <label for="pain">Schmerzen (0–10)</label>
-        <input id="pain" type="number" min="0" max="10" value="0">
+          <label for="date">Datum</label>
+          <input type="date" id="date" required>
 
-        <label for="sleep">Schlafqualität</label>
-        <select id="sleep">
-          <option>Sehr gut</option>
-          <option>Gut</option>
-          <option>Mittel</option>
-          <option>Schlecht</option>
-          <option>Sehr schlecht</option>
-        </select>
+          <label for="energy">Wie viel Energie hast du?</label>
+          <select id="energy">
+            <option>Sehr wenig</option>
+            <option>Wenig</option>
+            <option selected>Mittel</option>
+            <option>Gut</option>
+            <option>Sehr viel</option>
+          </select>
 
-        <label for="symptoms">Symptome und Beobachtungen</label>
-        <textarea id="symptoms" placeholder="Wie ging es dir heute?"></textarea>
+          <label for="pain">Wie stark sind deine Schmerzen?</label>
+          <select id="pain">
+            <option>Keine</option>
+            <option>Leicht</option>
+            <option>Mittel</option>
+            <option>Stark</option>
+            <option>Sehr stark</option>
+          </select>
 
-        <label for="activity">Aktivitäten und Belastungen</label>
-        <textarea id="activity" placeholder="Was hast du heute gemacht?"></textarea>
+          <label for="sleep">Wie hast du geschlafen?</label>
+          <select id="sleep">
+            <option>Sehr schlecht</option>
+            <option>Schlecht</option>
+            <option>Okay</option>
+            <option>Gut</option>
+            <option>Sehr gut</option>
+          </select>
 
-        <label for="recovery">Erholung</label>
-        <textarea id="recovery" placeholder="Was hat dir geholfen?"></textarea>
+          <label for="symptoms">Symptome oder Beschwerden</label>
+          <textarea id="symptoms" placeholder="Wie fühlst du dich heute?"></textarea>
 
-        <button type="submit">Eintrag speichern</button>
-      </form>
+          <label for="activity">Bewegung und Aktivität</label>
+          <textarea id="activity" placeholder="Was hast du heute gemacht?"></textarea>
+
+          <label for="recovery">Was hat dir heute gutgetan?</label>
+          <textarea id="recovery" placeholder="Zum Beispiel Ruhe, Spaziergang ..."></textarea>
+
+          <button class="main-button" type="submit">
+            Tages-Check speichern
+          </button>
+        </form>
+      </div>
     </section>
 
-    <section>
-      <h2>Meine bisherigen Einträge</h2>
-      <div id="entries">Noch keine Einträge vorhanden.</div>
-      <button id="exportButton" type="button">Daten als JSON exportieren</button>
+    <section id="history" class="page">
+      <div class="card">
+        <h2>💕 Dein Verlauf</h2>
+        <p>Hier findest du deine gespeicherten Tages-Checks.</p>
+        <div id="entries"></div>
+
+        <button class="main-button" onclick="exportData()">
+          Daten exportieren
+        </button>
+      </div>
     </section>
+
+    <section id="info" class="page">
+      <div class="card">
+        <h2>🖤 Über LEHEALTH</h2>
+        <p>
+          LEHEALTH ist dein persönliches Tagebuch für dein Wohlbefinden.
+          Du kannst festhalten, wie es dir geht und deinen Verlauf beobachten.
+        </p>
+
+        <h2>💗 Datenschutz</h2>
+        <p class="notice">
+          Diese erste Version speichert deine Einträge nur im lokalen
+          Speicher deines Browsers. Es gibt noch keinen Login und keine
+          sichere Cloud-Speicherung.
+          Die Website und der Quellcode sind öffentlich erreichbar.
+          Verwende deshalb vorerst keine echten oder vertraulichen
+          Gesundheitsdaten.
+        </p>
+      </div>
+    </section>
+
   </main>
 
+  <nav class="navigation">
+    <button class="active" data-page="checkin"
+      onclick="showPage('checkin')">💗 Check-in</button>
+    <button data-page="history"
+      onclick="showPage('history')">📖 Verlauf</button>
+    <button data-page="info"
+      onclick="showPage('info')">ℹ️ Info</button>
+  </nav>
+
   <script>
-    const form = document.getElementById("healthForm");
-    const entriesBox = document.getElementById("entries");
-    const storageKey = "lehealth_entries_v1";
+    const STORAGE_KEY = "lehealth_entries_v1";
 
     document.getElementById("date").value =
       new Date().toISOString().slice(0, 10);
 
-    function getEntries() {
-      return JSON.parse(localStorage.getItem(storageKey) || "[]");
-    }
+    function showPage(pageName) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
 
-    function showEntries() {
-      const entries = getEntries();
-      entriesBox.replaceChildren();
+      document.getElementById(pageName).classList.add("active");
 
-      if (!entries.length) {
-        entriesBox.textContent = "Noch keine Einträge vorhanden.";
-        return;
+      document.querySelectorAll(".navigation button").forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.page === pageName
+        );
+      });
+
+      document.getElementById("welcome").classList.add("hidden");
+
+      if (pageName === "history") {
+        renderEntries();
       }
 
-      entries.slice().reverse().forEach(entry => {
-        const div = document.createElement("div");
-        div.className = "entry";
-
-        const heading = document.createElement("strong");
-        heading.textContent = entry.date;
-
-        const details = document.createElement("p");
-        details.textContent =
-          "Energie: " + entry.energy +
-          " | Schmerzen: " + entry.pain +
-          " | Schlaf: " + entry.sleep;
-
-        const notes = document.createElement("p");
-        notes.textContent =
-          "Symptome: " + entry.symptoms +
-          "\nAktivitäten: " + entry.activity +
-          "\nErholung: " + entry.recovery;
-
-        div.append(heading, details, notes);
-        entriesBox.append(div);
-      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    form.addEventListener("submit", event => {
+    function getEntries() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    document.getElementById("healthForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
       const entry = {
@@ -177,31 +390,75 @@
       };
 
       const entries = getEntries();
-      entries.push(entry);
-      localStorage.setItem(storageKey, JSON.stringify(entries));
+      entries.unshift(entry);
 
-      form.reset();
-      document.getElementById("date").value =
-        new Date().toISOString().slice(0, 10);
-
-      showEntries();
-      alert("Dein Eintrag wurde gespeichert.");
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        alert("Dein Tages-Check wurde gespeichert. 💗");
+        this.reset();
+        document.getElementById("date").value =
+          new Date().toISOString().slice(0, 10);
+      } catch {
+        alert("Speichern leider nicht möglich. Bitte prüfe deinen Browser-Speicher.");
+      }
     });
 
-    document.getElementById("exportButton").addEventListener("click", () => {
-      const blob = new Blob(
-        [JSON.stringify(getEntries(), null, 2)],
+    function renderEntries() {
+      const container = document.getElementById("entries");
+      const entries = getEntries();
+
+      container.innerHTML = "";
+
+      if (entries.length === 0) {
+        container.textContent = "Noch keine Einträge vorhanden.";
+        return;
+      }
+
+      entries.forEach(entry => {
+        const box = document.createElement("div");
+        box.className = "entry";
+
+        const title = document.createElement("strong");
+        title.textContent = "📅 " + entry.date;
+
+        box.appendChild(title);
+
+        const details = [
+          ["Energie", entry.energy],
+          ["Schmerzen", entry.pain],
+          ["Schlaf", entry.sleep],
+          ["Symptome", entry.symptoms],
+          ["Aktivität", entry.activity],
+          ["Was gutgetan hat", entry.recovery]
+        ];
+
+        details.forEach(([label, value]) => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = label + ": " + (value || "–");
+          box.appendChild(paragraph);
+        });
+
+        container.appendChild(box);
+      });
+    }
+
+    function exportData() {
+      const data = getEntries();
+      const file = new Blob(
+        [JSON.stringify(data, null, 2)],
         { type: "application/json" }
       );
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "LEHEALTH-Daten.json";
-      link.click();
-      URL.revokeObjectURL(url);
-    });
 
-    showEntries();
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "lehealth-tagebuch.json";
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
   </script>
+
 </body>
 </html>
